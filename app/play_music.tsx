@@ -7,10 +7,12 @@ import {
   ActivityIndicator,
 } from "react-native";
 import Slider from "@react-native-community/slider";
-import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useLocalSearchParams } from "expo-router";
 import { Music } from "@/models/music";
+import { useTrackPlayer } from "@/hooks/useAudioPlayer";
+import { setupPlayer } from "react-native-track-player/lib/src/trackPlayer";
+import TrackPlayer from "react-native-track-player";
 
 const PlayMusic = () => {
   const params = useLocalSearchParams();
@@ -19,40 +21,42 @@ const PlayMusic = () => {
     : JSON.parse(params.music);
   console.log("music = ", music);
 
-  const {
-    loadAudio,
-    togglePlayPause,
-    seek,
-    isPlaying,
-    position,
-    duration,
-    isLoading,
-  } = useAudioPlayer();
+  const { isPlaying, position, duration, togglePlayPause, seek } =
+    useTrackPlayer();
 
   useEffect(() => {
-    loadAudio(music.musicUrl);
+    const setup = async () => {
+      await setupPlayer();
+      await TrackPlayer.add({
+        id: music._id,
+        url: music.musicUrl,
+        title: music.beatName,
+        artist: music.author,
+      });
+    };
+
+    setup();
 
     return () => {
-      loadAudio(null);
+      TrackPlayer.reset();
     };
-  }, []);
+  }, [music]);
 
-  const formatTime = (millisecond: number) => {
-    const minutes = Math.floor(millisecond / 60000);
-    const seconds = Math.floor((millisecond % 60000) / 1000);
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{music.beatName}</Text>
-      <Text style={styles.author}>{music.author}</Text>
+      <Text style={styles.artist}>{music.author}</Text>
 
       <Slider
         style={styles.slider}
-        minimumValue={0}
-        maximumValue={duration}
         value={position}
+        maximumValue={duration}
         onSlidingComplete={seek}
         minimumTrackTintColor="#1DB954"
         maximumTrackTintColor="#ccc"
@@ -62,17 +66,13 @@ const PlayMusic = () => {
         {formatTime(position)} / {formatTime(duration)}
       </Text>
 
-      {isLoading ? (
-        <ActivityIndicator size="large" color="#1DB954" />
-      ) : (
-        <TouchableOpacity style={styles.iconButton} onPress={togglePlayPause}>
-          <IconSymbol
-            name={isPlaying ? "pause.circle" : "play.circle"}
-            size={80}
-            color="#1DB954"
-          />
-        </TouchableOpacity>
-      )}
+      <TouchableOpacity onPress={togglePlayPause} style={styles.playButton}>
+        <IconSymbol
+          name={isPlaying ? "pause.circle" : "play.circle"}
+          size={80}
+          color="#1DB954"
+        />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -85,28 +85,33 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 8,
+    marginBottom: 10,
   },
-  author: {
+  artist: {
     fontSize: 16,
-    color: "#666",
-    marginBottom: 16,
+    color: "#888",
+    marginBottom: 20,
   },
   slider: {
     width: 300,
     height: 40,
-    marginBottom: 16,
+    marginBottom: 10,
   },
   time: {
     fontSize: 14,
-    color: "#333",
-    marginBottom: 16,
+    color: "#555",
+    marginBottom: 20,
   },
-  iconButton: {
-    justifyContent: "center",
-    alignItems: "center",
+  playButton: {
+    backgroundColor: "#1DB954",
+    padding: 15,
+    borderRadius: 30,
+  },
+  playButtonText: {
+    color: "#fff",
+    fontSize: 18,
   },
 });
 
