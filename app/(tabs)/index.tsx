@@ -7,7 +7,7 @@ import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
   const router = useRouter();
-  const music = useQuery(api.music.getMusic) || [];
+  const music = useQuery(api.music.listMusic) || [];
 
   const renderEmpty = () => {
     return <Text>No music found</Text>;
