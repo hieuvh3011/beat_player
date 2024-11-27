@@ -1,6 +1,8 @@
-# Welcome to your Expo app 👋
+# Insight Labs Assessment 
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Video demo
+
+https://github.com/user-attachments/assets/ed66154c-f961-41d9-bb03-aa7f1169976d
 
 ## Get started
 
