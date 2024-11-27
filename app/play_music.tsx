@@ -11,6 +11,7 @@ import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useLocalSearchParams } from "expo-router";
 import { Music } from "@/models/music";
+import MarqueeText from "@/components/MarqueeText";
 
 const PlayMusic = () => {
   const params = useLocalSearchParams();
@@ -45,7 +46,12 @@ const PlayMusic = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{music.beatName}</Text>
+      <MarqueeText
+        text={`${music.beatName}.mp3`}
+        textStyle={styles.title}
+        containerStyle={styles.titleContainer}
+        isPlaying={isPlaying}
+      />
       <Text style={styles.author}>{music.author}</Text>
 
       <Slider
@@ -83,6 +89,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fff",
+  },
+  titleContainer: {
+    width: '80%',
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 24,
