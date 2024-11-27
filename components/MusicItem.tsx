@@ -7,7 +7,7 @@ interface MusicItemProps {
   onPress: () => void;
 }
 
-export default function MusicItem({ music, onPress }: MusicItemProps) {
+const MusicItem = ({ music, onPress }: MusicItemProps) => {
   return (
     <TouchableOpacity
       style={styles.container}
@@ -66,3 +66,5 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
 });
+
+export default React.memo(MusicItem);

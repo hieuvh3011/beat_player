@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -15,10 +15,15 @@ import MarqueeText from "@/components/MarqueeText";
 
 const PlayMusic = () => {
   const params = useLocalSearchParams();
-  const music: Music = Array.isArray(params.music)
-    ? JSON.parse(params.music[0])
-    : JSON.parse(params.music);
-  console.log("music = ", music);
+  const music: Music = useMemo(() => {
+    return Array.isArray(params.music)
+      ? JSON.parse(params.music[0])
+      : JSON.parse(params.music);
+  }, [params.music]);
+
+  useEffect(() => {
+    console.log("music = ", music);
+  }, [music]);
 
   const {
     loadAudio,
@@ -91,7 +96,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   titleContainer: {
-    width: '80%',
+    width: "80%",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -121,4 +126,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PlayMusic;
+export default React.memo(PlayMusic);
